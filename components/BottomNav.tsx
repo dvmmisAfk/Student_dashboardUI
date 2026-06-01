@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { LayoutDashboard, BookOpen, BarChart2, Trophy } from "lucide-react";
-import { View } from "./DashboardShell";
+import { View } from "@/types/view";
 
 const items = [
   { id: "dashboard"    as View, label: "Home",       icon: LayoutDashboard },

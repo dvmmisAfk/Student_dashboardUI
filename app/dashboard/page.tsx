@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import DashboardShell from "@/components/DashboardShell";
 import { mockUser } from "@/lib/mock-data";
 import { createClient } from "@/lib/supabase/server";
-import { Course, ColorScheme } from "@/types/course";
+import { Course, ColorScheme, RawCourse } from "@/types/course";
 import Loading from "./loading";
 
 export const dynamic = "force-dynamic";
@@ -27,12 +27,8 @@ async function getCourses(): Promise<Course[]> {
 
   if (error) throw new Error(error.message);
 
-  return (data ?? []).map((row, i) => ({
-    id:           row.id,
-    title:        row.title,
-    progress:     row.progress,
-    icon_name:    row.icon_name,
-    created_at:   row.created_at,
+  return ((data ?? []) as RawCourse[]).map((row, i): Course => ({
+    ...row,
     color_scheme: (row.color_scheme as ColorScheme) ?? colorFor(row.icon_name, i),
   }));
 }

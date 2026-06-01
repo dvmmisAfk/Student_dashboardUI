@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Course } from "@/types/course";
+import { View } from "@/types/view";
 import { mockUser } from "@/lib/mock-data";
 import LeftRail from "./LeftRail";
 import BottomNav from "./BottomNav";
@@ -18,20 +19,14 @@ import CoursesView from "./views/CoursesView";
 import ActivityView from "./views/ActivityView";
 import AchievementsView from "./views/AchievementsView";
 
-export type View = "dashboard" | "courses" | "activity" | "achievements";
-
 const bentoContainer = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.1, delayChildren: 0 } },
+  visible: { transition: { staggerChildren: 0.1 } },
 };
 
 const bentoItem = {
-  hidden: { opacity: 0, y: 22 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { type: "spring" as const, stiffness: 280, damping: 26, mass: 0.9 },
-  },
+  hidden:  { opacity: 0, y: 22 },
+  visible: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 280, damping: 26, mass: 0.9 } },
 };
 
 interface Props {
@@ -56,8 +51,6 @@ export default function DashboardShell({ courses, greeting, user, date }: Props)
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  function openCourse(c: Course) { setSelectedCourse(c); }
-
   return (
     <div className="flex h-dvh overflow-hidden" style={{ background: "var(--surface-base)" }}>
       <LeftRail
@@ -79,27 +72,16 @@ export default function DashboardShell({ courses, greeting, user, date }: Props)
               className="pb-6"
             >
               {view === "dashboard" && (
-                <motion.div
-                  variants={bentoContainer}
-                  initial="hidden"
-                  animate="visible"
-                  className="space-y-4"
-                >
+                <motion.div variants={bentoContainer} initial="hidden" animate="visible" className="space-y-4">
+                  <motion.div variants={bentoItem}><MissionControl greeting={greeting} user={user} date={date} /></motion.div>
+                  <motion.div variants={bentoItem}><MetricsStrip user={user} /></motion.div>
                   <motion.div variants={bentoItem}>
-                    <MissionControl greeting={greeting} user={user} date={date} />
+                    <CourseGrid courses={courses} onContinue={c => setSelectedCourse(c)} onViewAll={() => setView("courses")} />
                   </motion.div>
-                  <motion.div variants={bentoItem}>
-                    <MetricsStrip user={user} />
-                  </motion.div>
-                  <motion.div variants={bentoItem}>
-                    <CourseGrid courses={courses} onContinue={openCourse} />
-                  </motion.div>
-                  <motion.div variants={bentoItem}>
-                    <BentoActivityTile />
-                  </motion.div>
+                  <motion.div variants={bentoItem}><BentoActivityTile /></motion.div>
                 </motion.div>
               )}
-              {view === "courses"      && <CoursesView courses={courses} onContinue={openCourse} />}
+              {view === "courses"      && <CoursesView courses={courses} onContinue={c => setSelectedCourse(c)} />}
               {view === "activity"     && <ActivityView />}
               {view === "achievements" && <AchievementsView />}
             </motion.div>
@@ -108,20 +90,18 @@ export default function DashboardShell({ courses, greeting, user, date }: Props)
         <BottomNav view={view} onNavigate={setView} />
       </div>
 
-      <RightRail onCourseSelect={openCourse} courses={courses} />
+      <RightRail courses={courses} onCourseSelect={c => setSelectedCourse(c)} />
 
       <AnimatePresence>
         {searchOpen && (
           <SearchOverlay
             courses={courses}
             onClose={() => setSearchOpen(false)}
-            onNavigate={(v) => { setView(v); setSearchOpen(false); }}
-            onCourseSelect={(c) => { openCourse(c); setSearchOpen(false); }}
+            onNavigate={v => { setView(v); setSearchOpen(false); }}
+            onCourseSelect={c => { setSelectedCourse(c); setSearchOpen(false); }}
           />
         )}
-        {selectedCourse && (
-          <CourseModal course={selectedCourse} onClose={() => setSelectedCourse(null)} />
-        )}
+        {selectedCourse && <CourseModal course={selectedCourse} onClose={() => setSelectedCourse(null)} />}
         {timerOpen && <StudyTimer onClose={() => setTimerOpen(false)} />}
       </AnimatePresence>
     </div>

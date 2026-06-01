@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { LayoutDashboard, BookOpen, BarChart2, Trophy, Settings, ChevronLeft, ChevronRight, Search, Timer, StickyNote } from "lucide-react";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import LogoMark from "./LogoMark";
-import { View } from "./DashboardShell";
+import { View } from "@/types/view";
 import { mockUser } from "@/lib/mock-data";
 
 interface Props {

@@ -17,9 +17,10 @@ const card = {
 interface Props {
   courses: Course[];
   onContinue: (c: Course) => void;
+  onViewAll?: () => void;
 }
 
-export default function CourseGrid({ courses, onContinue }: Props) {
+export default function CourseGrid({ courses, onContinue, onViewAll }: Props) {
   const prefersReducedMotion = useReducedMotion();
 
   return (
@@ -36,12 +37,17 @@ export default function CourseGrid({ courses, onContinue }: Props) {
             {courses.length}
           </span>
         </div>
-        <button className="text-[11px] font-mono font-semibold transition-colors"
-          style={{ color: "var(--accent-blue)" }}
-          onMouseEnter={e => (e.currentTarget.style.opacity = "0.7")}
-          onMouseLeave={e => (e.currentTarget.style.opacity = "1")}>
-          VIEW ALL →
-        </button>
+        {onViewAll && (
+          <button
+            onClick={onViewAll}
+            className="text-[11px] font-mono font-semibold transition-opacity"
+            style={{ color: "var(--accent-blue)" }}
+            onMouseEnter={e => (e.currentTarget.style.opacity = "0.7")}
+            onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+          >
+            VIEW ALL →
+          </button>
+        )}
       </header>
 
       <motion.div

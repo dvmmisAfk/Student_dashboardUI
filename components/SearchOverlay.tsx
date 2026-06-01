@@ -4,8 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Search, BookOpen, Activity, LayoutDashboard, Trophy, X, ArrowRight } from "lucide-react";
 import { Course } from "@/types/course";
-
-type View = "dashboard" | "courses" | "activity" | "achievements";
+import { View } from "@/types/view";
 
 interface Props {
   courses: Course[];
