@@ -6,29 +6,20 @@ export function createClient() {
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!url || !key) {
-    throw new Error(
-      "Supabase credentials are not configured. " +
-      "Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY " +
-      "to your .env.local (local) or Vercel environment variables (production)."
-    );
+    throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY");
   }
 
   const cookieStore = cookies();
 
   return createServerClient(url, key, {
     cookies: {
-      getAll() {
-        return cookieStore.getAll();
-      },
-      setAll(cookiesToSet) {
+      getAll: () => cookieStore.getAll(),
+      setAll: (list) => {
         try {
-          cookiesToSet.forEach(({ name, value, options }) =>
+          list.forEach(({ name, value, options }) =>
             cookieStore.set(name, value, options)
           );
-        } catch {
-          // setAll is called from a Server Component; cookie writes are
-          // only possible inside middleware or Route Handlers — safe to ignore.
-        }
+        } catch {}
       },
     },
   });

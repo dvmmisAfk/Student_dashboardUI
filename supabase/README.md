@@ -1,51 +1,35 @@
-# Supabase Setup
+# Supabase setup
 
-## Option A — Supabase Dashboard (quickest)
+Run both files in the Supabase SQL editor (Project → SQL Editor):
 
-1. Go to your project → **SQL Editor**
-2. Paste and run `migrations/20240101000000_create_courses.sql`
-3. Paste and run `seed.sql`
+1. `migrations/20240101000000_create_courses.sql`
+2. `seed.sql`
 
-## Option B — Supabase CLI
+Or via the CLI:
 
 ```bash
-# Install CLI (if not already)
-npm install -g supabase
-
-# Link to your project
-supabase link --project-ref <your-project-ref>
-
-# Push the migration
+supabase link --project-ref <your-ref>
 supabase db push
-
-# Seed
 supabase db execute --file seed.sql
 ```
 
-## Environment Variables
-
-Add these to your `.env.local` (dev) or Vercel dashboard (prod):
+Credentials (Project Settings → API):
 
 ```
-NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
+NEXT_PUBLIC_SUPABASE_URL=https://<ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key>
 ```
-
-Both values are in your Supabase project under **Settings → API**.
 
 ## Schema
 
 ```
 courses
-├── id           uuid        PK, default gen_random_uuid()
-├── title        text        NOT NULL, max 120 chars
-├── progress     smallint    0–100
-├── icon_name    text        Lucide icon name (Brain, Cpu, Network, Atom, …)
-├── color_scheme text        'blue' | 'purple' | 'cyan' | 'green'
-└── created_at   timestamptz default now()
+  id           uuid        PK, gen_random_uuid()
+  title        text        max 120 chars
+  progress     smallint    0–100
+  icon_name    text        Lucide icon name (Brain, Cpu, Network, Atom …)
+  color_scheme text        blue | purple | cyan | green
+  created_at   timestamptz default now()
 ```
 
-## RLS
-
-Row Level Security is enabled. Anonymous users can **read** all rows.
-Only authenticated users can write. This is safe for a public demo.
+RLS is enabled. Anonymous users can read all rows; writes require authentication.
